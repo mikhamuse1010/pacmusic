@@ -18,15 +18,12 @@ jobs:
           script: |
             cd ${{ vars.APP_STG_PATH }}
             git pull origin main
-            echo "MINIO_ENDPOINT=${{ secrets.MINIO_STG_ENDPOINT }}" > .env
-            echo "MINIO_ACCESS_KEY=${{ secrets.MINIO_STG_ACCESS_KEY }}" >> .env
-            echo "MINIO_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
-            echo "APP_PORT=${{ secrets.APP_STG_PORT }}" >> .env
             
-            # This is the new debugging part
-            echo "--- Verifying .env file ---"
-            cat .env
-            echo "---------------------------"
+            # Create the .env file with staging-specific variable names
+            echo "MINIO_STG_ENDPOINT=${{ secrets.MINIO_STG_ENDPOINT }}" > .env
+            echo "MINIO_STG_ACCESS_KEY=${{ secrets.MINIO_STG_ACCESS_KEY }}" >> .env
+            echo "MINIO_STG_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
+            echo "APP_STG_PORT=${{ secrets.APP_STG_PORT }}" >> .env
             
             docker-compose up --build -d
 
