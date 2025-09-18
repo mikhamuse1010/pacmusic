@@ -9,13 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - name: Deploy to staging via SSH
-        uses: appleboy/ssh-action@master
+      # Step 1: Install the SSH Private Key
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.SSH_HOST_STAGING }}
-          username: ${{ secrets.SSH_PASSWORD }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
-          script: |
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+
+      # Step 2: Run the Deployment Script via standard SSH
+      - name: Deploy to Staging
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER_NAME_STAGING }}@${{ secrets.SSH_HOST_STAGING }} << 'EOF'
             cd ${{ vars.APP_STG_PATH }}
             git pull origin main
             echo "MINIO_ENDPOINT=${{ secrets.MINIO_STG_ENDPOINT }}" > .env
@@ -23,6 +26,8 @@ jobs:
             echo "MINIO_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
             echo "APP_PORT=${{ secrets.APP_STG_PORT }}" >> .env
             docker-compose up --build -d
-
+          EOF
+      
+      # Step 3: Test the endpoint after deployment
       - name: Test Hit Endpoint
         run: curl ${{ secrets.STG_URL }}
