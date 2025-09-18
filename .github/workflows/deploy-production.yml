@@ -17,11 +17,17 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_PRODUCTION }}
           script: |
             cd ${{ vars.APP_PROD_PATH }}
-            echo "MINIO_ENDPOINT=${{ secrets.MINIO_PROD_ENDPOINT }}" > .env
-            echo "MINIO_ACCESS_KEY=${{ secrets.MINIO_PROD_ACCESS_KEY }}" >> .env
-            echo "MINIO_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
-            echo "APP_PORT=${{ secrets.APP_PROD_PORT }}" >> .env
+            
+            # Create the .env file with production-specific variable names
+            echo "MINIO_PROD_ENDPOINT=${{ secrets.MINIO_PROD_ENDPOINT }}" > .env
+            echo "MINIO_PROD_ACCESS_KEY=${{ secrets.MINIO_PROD_ACCESS_KEY }}" >> .env
+            echo "MINIO_PROD_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
+            echo "APP_PROD_PORT=${{ secrets.APP_PROD_PORT }}" >> .env
+            
+            # Pull the new image from Docker Hub
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pacmusic:${{ github.ref_name }}
+            
+            # Tell docker-compose to ONLY start the 'pacmusic-prod' service
             docker-compose up -d pacmusic-prod
 
       - name: Test Hit Endpoint
