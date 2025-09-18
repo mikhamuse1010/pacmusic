@@ -25,7 +25,7 @@ jobs:
             echo "MINIO_STG_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
             echo "APP_STG_PORT=${{ secrets.APP_STG_PORT }}" >> .env
             
-            docker-compose up --build -d
+            docker-compose up --build -d pacmusic-stg
 
       - name: Test Hit Endpoint
         run: curl ${{ secrets.STG_URL }}

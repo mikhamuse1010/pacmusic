@@ -22,7 +22,7 @@ jobs:
             echo "MINIO_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
             echo "APP_PORT=${{ secrets.APP_PROD_PORT }}" >> .env
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pacmusic:${{ github.ref_name }}
-            docker-compose up -d
+            docker-compose up -d pacmusic-prod
 
       - name: Test Hit Endpoint
         run: curl ${{ secrets.PROD_URL }}
