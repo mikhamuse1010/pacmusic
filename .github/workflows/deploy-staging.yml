@@ -27,5 +27,8 @@ jobs:
             
             docker-compose -f docker-compose.stg.yaml up --build -d
 
+      - name: Wait for application to start
+        run: sleep 15
+
       - name: Test Hit Endpoint
         run: curl ${{ secrets.STG_URL }}
