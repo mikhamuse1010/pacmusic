@@ -1,0 +1,28 @@
+name: Deploy Staging 🚀
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy-to-staging-server:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Deploy to staging via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_STAGING }}
+          username: ${{ secrets.SSH_USER_NAME_STAGING }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+          script: |
+            cd ${{ vars.APP_STG_PATH }}
+            git pull origin main
+            echo "MINIO_ENDPOINT=${{ secrets.MINIO_STG_ENDPOINT }}" > .env
+            echo "MINIO_ACCESS_KEY=${{ secrets.MINIO_STG_ACCESS_KEY }}" >> .env
+            echo "MINIO_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
+            echo "APP_PORT=${{ secrets.APP_STG_PORT }}" >> .env
+            docker-compose up --build -d
+
+      - name: Test Hit Endpoint
+        run: curl ${{ secrets.STG_URL }}
