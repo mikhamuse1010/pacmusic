@@ -28,7 +28,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pacmusic:${{ github.ref_name }}
             
             # Tell docker-compose to ONLY start the 'pacmusic-prod' service
-            docker-compose up -d pacmusic-prod
+            docker-compose -f docker-compose.prod.yaml up -d
 
       - name: Test Hit Endpoint
         run: curl ${{ secrets.PROD_URL }}

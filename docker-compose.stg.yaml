@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  pacmusic-stg:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: pacmusic-stg
+    restart: always
+    environment:
+      MINIO_ENDPOINT: ${MINIO_STG_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_STG_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_STG_SECRET_KEY}
+    ports:
+      - "${APP_STG_PORT}:5000"
+    networks:
+      - pacmusic-network
+
+networks:
+  pacmusic-network:
+    driver: bridge
+    name: pacmusic-network
